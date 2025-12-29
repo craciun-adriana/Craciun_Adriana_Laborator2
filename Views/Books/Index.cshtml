@@ -40,7 +40,8 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Genre.Id)
+                @* because the genre name can be null, we need to use this format which is different then the others *@
+                @item.Genre?.Name
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

@@ -65,7 +65,7 @@ namespace Craciun_Adriana_Laborator2.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Id", book.GenreID);
+            ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Name", book.GenreID);
             return View(book);
         }
 
@@ -82,7 +82,7 @@ namespace Craciun_Adriana_Laborator2.Controllers
             {
                 return NotFound();
             }
-            ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Id", book.GenreID);
+            ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Name", book.GenreID);
             return View(book);
         }
 
@@ -118,7 +118,7 @@ namespace Craciun_Adriana_Laborator2.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Id", book.GenreID);
+            ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Name", book.GenreID);
             return View(book);
         }
 
