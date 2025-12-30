@@ -49,6 +49,7 @@ namespace Craciun_Adriana_Laborator2.Controllers
         public IActionResult Create()
         {
             ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Name");
+            ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", "LastName");
             return View();
         }
 
@@ -57,7 +58,7 @@ namespace Craciun_Adriana_Laborator2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Author,Price,GenreID")] Book book)
+        public async Task<IActionResult> Create([Bind("ID,Title,AuthorID,Price,GenreID")] Book book)
         {
             if (ModelState.IsValid)
             {
@@ -66,6 +67,7 @@ namespace Craciun_Adriana_Laborator2.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Name", book.GenreID);
+            ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", book.AuthorID);
             return View(book);
         }
 
@@ -83,6 +85,8 @@ namespace Craciun_Adriana_Laborator2.Controllers
                 return NotFound();
             }
             ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Name", book.GenreID);
+            ViewData["AuthorF"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", book.AuthorID);
+            ViewData["AuthorL"] = new SelectList(_context.Set<Author>(), "Id", "LastName", book.AuthorID);
             return View(book);
         }
 
@@ -119,6 +123,8 @@ namespace Craciun_Adriana_Laborator2.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Name", book.GenreID);
+            ViewData["AuthorF"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", book.AuthorID);
+            ViewData["AuthorL"] = new SelectList(_context.Set<Author>(), "Id", "LastName", book.AuthorID);
             return View(book);
         }
 
