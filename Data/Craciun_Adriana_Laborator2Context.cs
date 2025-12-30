@@ -18,5 +18,6 @@ namespace Craciun_Adriana_Laborator2.Data
         public DbSet<Craciun_Adriana_Laborator2.Models.Customer> Customer { get; set; } = default!;
         public DbSet<Craciun_Adriana_Laborator2.Models.Genre> Genre { get; set; }
         public DbSet<Craciun_Adriana_Laborator2.Models.Author> Author { get; set; }
+        public DbSet<Craciun_Adriana_Laborator2.Models.Order> Order { get; set; } = default!;
     }
 }
