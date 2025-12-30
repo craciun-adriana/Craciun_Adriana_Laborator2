@@ -49,8 +49,8 @@ namespace Craciun_Adriana_Laborator2.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
-            ViewData["BookID"] = new SelectList(_context.Book, "ID", "ID");
-            ViewData["CustomerID"] = new SelectList(_context.Customer, "CustomerID", "CustomerID");
+            ViewData["BookID"] = new SelectList(_context.Book, "ID", "Title");
+            ViewData["CustomerID"] = new SelectList(_context.Customer, "CustomerID", "Name");
             return View();
         }
 
@@ -67,8 +67,8 @@ namespace Craciun_Adriana_Laborator2.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookID"] = new SelectList(_context.Book, "ID", "ID", order.BookID);
-            ViewData["CustomerID"] = new SelectList(_context.Customer, "CustomerID", "CustomerID", order.CustomerID);
+            ViewData["BookID"] = new SelectList(_context.Book, "ID", "Title", order.BookID);
+            ViewData["CustomerID"] = new SelectList(_context.Customer, "CustomerID", "Name", order.CustomerID);
             return View(order);
         }
 
@@ -85,8 +85,8 @@ namespace Craciun_Adriana_Laborator2.Controllers
             {
                 return NotFound();
             }
-            ViewData["BookID"] = new SelectList(_context.Book, "ID", "ID", order.BookID);
-            ViewData["CustomerID"] = new SelectList(_context.Customer, "CustomerID", "CustomerID", order.CustomerID);
+            ViewData["BookID"] = new SelectList(_context.Book, "ID", "Title", order.BookID);
+            ViewData["CustomerID"] = new SelectList(_context.Customer, "CustomerID", "Name", order.CustomerID);
             return View(order);
         }
 
@@ -122,8 +122,8 @@ namespace Craciun_Adriana_Laborator2.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookID"] = new SelectList(_context.Book, "ID", "ID", order.BookID);
-            ViewData["CustomerID"] = new SelectList(_context.Customer, "CustomerID", "CustomerID", order.CustomerID);
+            ViewData["BookID"] = new SelectList(_context.Book, "ID", "Title", order.BookID);
+            ViewData["CustomerID"] = new SelectList(_context.Customer, "CustomerID", "Name", order.CustomerID);
             return View(order);
         }
 

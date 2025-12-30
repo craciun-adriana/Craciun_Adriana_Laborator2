@@ -37,6 +37,9 @@ namespace Craciun_Adriana_Laborator2.Controllers
             var book = await _context.Book
                 .Include(b => b.Genre)
                 .Include(b => b.Author)
+                .Include(b => b.Orders)
+                .ThenInclude(o => o.Customer)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (book == null)
             {
@@ -59,13 +62,23 @@ namespace Craciun_Adriana_Laborator2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,AuthorID,Price,GenreID")] Book book)
+        public async Task<IActionResult> Create([Bind("Title,AuthorID,Price,GenreID")] Book book)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(book);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(book);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                //Log the error (uncomment ex variable name and write a log.)
+                ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists " +
+                    "see your system administrator.");
             }
             ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Name", book.GenreID);
             ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "Id", "FullName", book.AuthorID);
@@ -97,34 +110,35 @@ namespace Craciun_Adriana_Laborator2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Title,AuthorID,Price,GenreID")] Book book)
         {
-            if (id != book.ID)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var bookToUpdate = await _context.Book.FirstOrDefaultAsync(b => b.ID == id);
+            
+            if (await TryUpdateModelAsync<Book>(
+                bookToUpdate,
+                "",
+                b => b.Title, b => b.AuthorID, b => b.Price, b => b.GenreID))
             {
                 try
                 {
-                    _context.Update(book);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException /* ex */)
                 {
-                    if (!BookExists(book.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    //Log the error (uncomment ex variable name and write a log.)
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                        "Try again, and if the problem persists, " +
+                        "see your system administrator.");
                 }
-                return RedirectToAction(nameof(Index));
             }
+
             ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "Id", "Name", book.GenreID);
             ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "Id", "FullName", book.AuthorID);
-            return View(book);
+            return View(bookToUpdate);
         }
 
         // GET: Books/Delete/5
@@ -143,7 +157,7 @@ namespace Craciun_Adriana_Laborator2.Controllers
                 return NotFound();
             }
 
-            return View(book);
+            return View(book); 
         }
 
         // POST: Books/Delete/5
