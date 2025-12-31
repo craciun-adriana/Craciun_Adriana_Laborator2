@@ -20,10 +20,47 @@ namespace Craciun_Adriana_Laborator2.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
-            var craciun_Adriana_Laborator2Context = _context.Book.Include(b => b.Genre).Include(b => b.Author);
-            return View(await craciun_Adriana_Laborator2Context.ToListAsync());
+            ViewData["TitleSortParm"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
+            ViewData["CurrentFilter"] = searchString;
+
+            var book = from b in _context.Book
+                       join a in _context.Author on b.AuthorID equals a.Id into authorGroup
+                       from a in authorGroup.DefaultIfEmpty()
+                       join g in _context.Genre on b.GenreID equals g.Id into genreGroup
+                       from g in genreGroup.DefaultIfEmpty()
+                       select new BookViewModel
+                       {
+                           ID = b.ID,
+                           Title = b.Title,
+                           Author = a.FullName,
+                           Price = b.Price,
+                           Genre = g.Name
+                       };
+
+            if (!String.IsNullOrEmpty(searchString))
+            { 
+                book = book.Where(b => b.Title.Contains(searchString)); 
+            }
+
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    book = book.OrderByDescending(b => b.Title);
+                    break;
+                case "Price":
+                    book = book.OrderBy(b => b.Price);
+                    break;
+                case "price_desc":
+                    book = book.OrderByDescending(b => b.Price);
+                    break;
+                default:
+                    book = book.OrderBy(b => b.Title);
+                    break;
+            }
+            return View(await book.AsNoTracking().ToListAsync());
         }
 
         // GET: Books/Details/5
