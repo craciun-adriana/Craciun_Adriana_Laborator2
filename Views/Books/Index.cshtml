@@ -14,11 +14,23 @@
    <div class="form-action no-color">
         <p>
             Find by title: <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" />
+            <input type="text" name="searchAuthor" value="@ViewData["CurrentAuthorFilter"]" hidden />
             <input type="submit" value="Search" class="btn btn-default" />
             <a asp-action="Index">Back to Full List</a>
         </p>
    </div>
 </form>    
+
+<form asp-action="Index" method="get">
+    <div class="form-action no-color">
+        <p>
+            Find by author: <input type="text" name="searchAuthor" value="@ViewData["CurrentAuthorFilter"]" />
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" hidden />
+            <input type="submit" value="Search" class="btn btn-default" />
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
 
 <table class="table">
     <thead>

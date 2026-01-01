@@ -34,7 +34,10 @@ namespace Craciun_Adriana_Laborator2.Controllers
             }
 
             var author = await _context.Author
+                .Include(a => a.Books)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (author == null)
             {
                 return NotFound();

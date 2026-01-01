@@ -20,13 +20,30 @@ namespace Craciun_Adriana_Laborator2.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, string searchAuthor)
         {
             ViewData["TitleSortParm"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
             ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
             ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentAuthorFilter"] = searchAuthor;
 
-            var book = from b in _context.Book
+            var books = _context.Book.AsQueryable();
+
+            // Filter by title first if provided
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                books = books.Where(b => b.Title.Contains(searchString));
+            }
+
+            // Filter by author if provided (before projection)
+            if (!String.IsNullOrEmpty(searchAuthor))
+            {
+                books = books.Where(b => b.Author.FirstName.Contains(searchAuthor) || 
+                                                     b.Author.LastName.Contains(searchAuthor) ||
+                                                     (b.Author.FirstName + " " + b.Author.LastName).Contains(searchAuthor));
+            }
+
+            var book = from b in books
                        join a in _context.Author on b.AuthorID equals a.Id into authorGroup
                        from a in authorGroup.DefaultIfEmpty()
                        join g in _context.Genre on b.GenreID equals g.Id into genreGroup
@@ -35,15 +52,10 @@ namespace Craciun_Adriana_Laborator2.Controllers
                        {
                            ID = b.ID,
                            Title = b.Title,
-                           Author = a.FullName,
+                           Author = a.FirstName + " " + a.LastName,
                            Price = b.Price,
                            Genre = g.Name
                        };
-
-            if (!String.IsNullOrEmpty(searchString))
-            { 
-                book = book.Where(b => b.Title.Contains(searchString)); 
-            }
 
             switch (sortOrder)
             {
