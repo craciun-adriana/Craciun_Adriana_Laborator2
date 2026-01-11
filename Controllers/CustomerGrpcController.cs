@@ -83,14 +83,15 @@ namespace Craciun_Adriana_Laborator2.Controllers
         }
 
         [HttpPost, ActionName("Edit")]
-        public IActionResult EditCustomer(int id)
+        public IActionResult EditCustomer(GrpcCustomerService.Customer customer)
         {
-            var client = new CustomerService.CustomerServiceClient(channel);
-            Empty response = client.Delete(new CustomerId()
-            {
-                Id = id
-            });
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid == true)
+            { 
+                var client = new CustomerService.CustomerServiceClient(channel);
+                var updatedClient = client.Update(customer);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(customer);
         }
 
 
