@@ -3,6 +3,8 @@ using Grpc.Net.Client;
 using GrpcCustomerService;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Craciun_Adriana_Laborator2.Controllers
 {
@@ -62,5 +64,36 @@ namespace Craciun_Adriana_Laborator2.Controllers
             });
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Edit(int? id)
+        {
+            var client = new CustomerService.CustomerServiceClient(channel);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            var customer = client.Get(new CustomerId()
+            {
+                Id = id.Value
+            });
+
+            return View(customer);
+        }
+
+        [HttpPost, ActionName("Edit")]
+        public IActionResult EditCustomer(int id)
+        {
+            var client = new CustomerService.CustomerServiceClient(channel);
+            Empty response = client.Delete(new CustomerId()
+            {
+                Id = id
+            });
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
     }
 }

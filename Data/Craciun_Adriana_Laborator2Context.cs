@@ -19,5 +19,10 @@ namespace Craciun_Adriana_Laborator2.Data
         public DbSet<Craciun_Adriana_Laborator2.Models.Genre> Genre { get; set; }
         public DbSet<Craciun_Adriana_Laborator2.Models.Author> Author { get; set; }
         public DbSet<Craciun_Adriana_Laborator2.Models.Order> Order { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Order>().HasOne(o => o.Customer).WithMany(x => x.Orders).OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }
